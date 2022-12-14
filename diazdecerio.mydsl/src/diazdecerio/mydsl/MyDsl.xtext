@@ -1,0 +1,44 @@
+grammar diazdecerio.mydsl.MyDsl with org.eclipse.xtext.common.Terminals
+
+generate myDsl "http://www.mydsl.diazdecerio/MyDsl"
+
+JavaClass:
+	'package' packageName=ID '.dis2022;'
+	'public' 'class' name=ID '{'
+		'int' 'a' '=' '0'';'
+		'int' 'b' '=' '0'';'
+		(constructor = Constructor & main=Main)
+	'}';
+	
+Main:
+	'public' 'static' 'void' 'main' '(' 'String''['']' 'args' ')' '{'
+		theType = [JavaClass] 's' '=' 'new' again=[JavaClass]'()'';'
+	'}';
+
+Constructor:
+	'public' constructor=[JavaClass] '()' '{'
+		stmts += Stmt+
+	'}';
+
+Stmt:
+	SumStmt|MulStmt|DivStmt|WhileStmt;
+
+SumStmt:
+	reg = Register '+=' value = INT ';';
+
+MulStmt:
+	reg = Register '*=' value = INT ';';
+
+DivStmt:
+	reg = Register '/='  value = INT ';';
+
+WhileStmt:
+	'while''(' cond = Condition ')' '{'
+		stmtsWhile += Stmt+
+	'}';
+
+Condition:
+	(reg=Register '!=' number=INT) | (number=INT '!=' reg=Register);
+
+enum Register:
+	RegisterA = 'a' | RegisterB = 'b';
